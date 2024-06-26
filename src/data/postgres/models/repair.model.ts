@@ -33,6 +33,7 @@ export class Repairs extends BaseEntity {
 
   @Column({
     nullable: false,
+    type:'int'
   })
   id_user: number;
 

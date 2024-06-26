@@ -2,28 +2,30 @@ import { Request, Response } from "express";
 import { UserServices } from "../services/user.service";
 
 export class UserController {
-  constructor(public readonly UserServices: UserServices) {}
-
+  
+  constructor(public readonly Userservice: UserServices) 
+  {}
 
   createUser = (req: Request, res: Response) => {
     const { name, email, password } = req.body;
-    this.UserServices.CreateUser({ name, email, password })
+    this.Userservice.CreateUser({ name, email, password })
 
       .then((user) => {
-        return res.status(201).json(user);
+         res.status(201).json(user);
       })
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
+
   getUser = (_: Request, res: Response) => {
-    this.UserServices.findAllUsers()
+    this.Userservice.findAllUsers()
       .then((user) => {
-        return res.status(200).json(user);
+         res.status(200).json(user);
       })
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
@@ -31,42 +33,52 @@ export class UserController {
   getUserById = (req: Request, res: Response) => {
     const { id } = req.params;
     if (isNaN(+id)) {
-      return res.status(400).json({ message: "El id debe ser un numero" });
+       res.status(400).json({ message: "El id debe ser un numero" });
     }
-    this.UserServices.findOneUserById(+id)
+    this.Userservice.findOneUserById(+id)
 
       .then((user) => {
-        return res.status(200).json(user);
+         res.status(200).json(user);
       })
 
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
   
-  updategetUser = (req: Request, res: Response) => {
+  updateUser = (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
 
     if (isNaN(+id)) {
-      return res.status(400).json({ message: "El id debe ser un numero" });
+       res.status(400).json({ message: "El id debe ser un numero" });
     }
 
-    this.UserServices.updateUser({ name, email, password }, +id)
+    this.Userservice.updateUser({ name, email }, +id)
 
       .then((user) => {
-        return res.status(200).json(user);
+         res.status(200).json(user);
       })
       .catch((error: any) => {
-        console.log(error);
-        return res.status(500).json(error);
+        
+         res.status(500).json(error);
       });
   };
 
   
   deleteUser = (req: Request, res: Response) => {
     const { id } = req.params;
-    return res.status(204).json();
+    if(isNaN(+id)){
+      return res.status(400).json({ message: 'El id debe ser un numero' })
+    }
+    this.Userservice.deleteUser(+id)
+    .then(() => {
+      res.status(204).json();
+   })
+   .catch((error: any) => {
+     
+      res.status(500).json(error);
+   });
   };
 }

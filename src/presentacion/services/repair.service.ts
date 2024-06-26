@@ -10,15 +10,15 @@ export class RepairsServices {
   constructor() {}
 
   async CreateRepairs(RepairData: any) {
-    console.log(RepairData);
-
+    // console.log(RepairData);
+    const repair = new Repairs();
+    repair.date = RepairData.date;
+    repair.status = Status.PENDING;
+    repair.id_user = RepairData.id_user;
     try {
-      const repair = new Repairs();
-      repair.date = RepairData.date.toLowerCase().trim();
-      repair.status = RepairData.Status.PENDING.toLowerCase().trim();
-      repair.id_user = RepairData.id_user;
-      await repair.save();
-      return repair;
+      
+    return  await repair.save();
+
     } catch (error: any) {
       console.log(error);
     }
@@ -26,7 +26,11 @@ export class RepairsServices {
 
   async findAllRepair() {
     try {
-      return await Repairs.find();
+      return await Repairs.find({
+        where:{
+          status:Status.PENDING
+        }
+      });
     } catch (error: any) {
       console.log(error);
     }
@@ -36,34 +40,50 @@ export class RepairsServices {
       const repair = await Repairs.findOne({
         where: {
           id: id,
+          status:Status.PENDING
         },
       });
 
       if (!repair) {
-        throw new Error("el id no existe");
+        throw new Error("no existe cita para reparacion");
       }
       return repair;
     } catch (error: any) {
       throw new Error("internal server error");
-      console.log(error);
+      
     }
   }
 
-  async updateRepair(UserData: any, id: number) {
+  async updateRepair(RepairData: any, id: number) {
     const repair = await this.findOneRepairById(id);
+    
+    repair.date = RepairData.date;
+    repair.status = Status.COMPLETED;
+    repair.id_user = RepairData.id_user;
+    
+    try {
+        await repair.save();
+        return;
+      } catch (error) {
+        console.log(error);
+  
+        throw new Error("Internal Server Error");
+      }
+  }
 
-    repair.date = UserData.date.toLowerCase().trim();
-    repair.status = UserData.status.toLowerCase().trim();
-    repair.id_user = UserData.id_user.toLowerCase().trim();
+  async deleteRepair(id: number){
+
+    const repair = await this.findOneRepairById(id)
+    repair.status = Status.CANCELLED
 
     try {
-      await repair.save();
-
-      return repair;
+      await repair.save()
+      return;
     } catch (error) {
-      console.log(error);
-
-      throw new Error("Internal Server Error");
+      throw new Error('Internal Server Error');
     }
+
   }
+
+
 }

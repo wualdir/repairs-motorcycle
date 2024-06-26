@@ -6,14 +6,13 @@ export class UserRoutes {
   static get routes(): Router {
     const router = Router();
 
-    const UserUser = new UserServices();
-
-    const controller = new UserController(UserUser);
+    const Userservice = new UserServices();
+    const controller = new UserController(Userservice);
 
     router.post("/", controller.createUser);
     router.get("/", controller.getUser);
     router.get("/:id", controller.getUserById);
-    router.patch("/:id", controller.updategetUser);
+    router.patch("/:id", controller.updateUser);
     router.delete("/:id", controller.deleteUser);
 
     return router;

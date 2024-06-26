@@ -6,44 +6,46 @@ enum Status {
   CANCELLED = "CANCELLED",
 }
 export class RepairsController {
-  constructor(public readonly RepairServices: RepairsServices) {}
+
+  constructor(public readonly Repairservice: RepairsServices) 
+  {}
 
   createRepairs = (req: Request, res: Response) => {
-    const { date, status, id_user } = req.body;
+    const { date, id_user } = req.body;
 
-    this.RepairServices.CreateRepairs({ date, status, id_user })
+    this.Repairservice.CreateRepairs({ date, id_user })
 
       .then((repair) => {
-        return res.status(201).json(repair);
+         res.status(201).json(repair);
       })
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
   getRepairs = (req: Request, res: Response) => {
-    this.RepairServices.findAllRepair()
+    this.Repairservice.findAllRepair()
       .then((repair) => {
-        return res.status(200).json(repair);
+         res.status(200).json(repair);
       })
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
   getRepairsById = (req: Request, res: Response) => {
     const { id } = req.params;
     if (isNaN(+id)) {
-      return res.status(400).json({ message: "El id debe ser un numero" });
+       res.status(400).json({ message: "El id debe ser un numero" });
     }
-    this.RepairServices.findOneRepairById(+id)
+    this.Repairservice.findOneRepairById(+id)
 
       .then((repair) => {
-        return res.status(200).json(repair);
+         res.status(200).json(repair);
       })
 
       .catch((error: any) => {
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
@@ -52,23 +54,32 @@ export class RepairsController {
     const { date, status, id_user } = req.body;
 
     if (isNaN(+id)) {
-      return res.status(400).json({ message: "El id debe ser un numero" });
+       res.status(400).json({ message: "El id debe ser un numero" });
     }
 
-    this.RepairServices.updateRepair({ date, status, id_user }, +id)
+    this.Repairservice.updateRepair({ date, status, id_user }, +id)
 
       .then((repair) => {
-        return res.status(200).json(repair);
+         res.status(200).json(repair);
       })
       .catch((error: any) => {
         console.log(error);
-        return res.status(500).json(error);
+         res.status(500).json(error);
       });
   };
 
- 
   deleteRepairs = (req: Request, res: Response) => {
-    const { id } = req.params;
-    return res.status(204).json();
-  };
+   const { id } = req.params;
+   if(isNaN(+id)){
+     return res.status(400).json({ message: 'El id debe ser un numero' })
+   }
+   this.Repairservice.deleteRepair(+id)
+   .then(() => {
+     res.status(204).json();
+  })
+  .catch((error: any) => {
+    
+     res.status(500).json(error);
+  });
+ };
 }

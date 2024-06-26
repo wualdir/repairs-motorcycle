@@ -1,23 +1,28 @@
 import { User } from "../../data";
-enum Status {
-  ACTIVE = "ACTIVE",
 
-  INACTIVE = "INACTIVE",
+enum Rol {
+  CLIENT = "CLIENT",
+  EMPLOYEE = "EMPLOYEE",
 }
 
+enum Client {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+}
 export class UserServices {
   constructor() {}
 
   async CreateUser(UserData: any) {
-    console.log(UserData);
-
+    const user = new User();
+    user.name = UserData.name.toLowerCase().trim();
+    user.email = UserData.email.toLowerCase().trim();
+    user.password = UserData.password.trim();
+    user.rol=Rol.CLIENT;
+    user.status=Client.ACTIVE;
     try {
-      const user = new User();
-      user.name = UserData.name.toLowerCase().trim();
-      user.email = UserData.email.toLowerCase().trim();
-      user.password = UserData.password;
-      await user.save();
-      return user;
+      
+     return await user.save();
+      
     } catch (error: any) {
       console.log(error);
     }
@@ -26,26 +31,32 @@ export class UserServices {
 
   async findAllUsers() {
     try {
-      return await User.find({});
+      return await User.find({
+        where:{
+          status:Client.ACTIVE
+        }
+      });
     } catch (error: any) {
       console.log(error);
     }
   }
+
   async findOneUserById(id: number) {
     try {
       const user = await User.findOne({
         where: {
           id: id,
+          status:Client.ACTIVE
         },
       });
 
       if (!user) {
-        throw new Error("el id no existe");
+        throw new Error("el usuario no existe");
       }
       return user;
     } catch (error: any) {
       throw new Error("internal server error");
-      console.log(error);
+     
     }
   }
 
@@ -54,16 +65,28 @@ export class UserServices {
 
     user.name = UserData.name.toLowerCase().trim();
     user.email = UserData.email.toLowerCase().trim();
-    user.password = UserData.password.toLowerCase().trim();
-
+    
     try {
-      await user.save();
-
-      return user;
+    return  await user.save();
     } catch (error) {
       console.log(error);
 
       throw new Error("Internal Server Error");
     }
   }
+
+  async deleteUser(id: number){
+
+    const user = await this.findOneUserById(id)
+    user.status = Client.INACTIVE
+
+    try {
+      await user.save()
+      return;
+    } catch (error) {
+      throw new Error('Internal Server Error');
+    }
+
+  }
+
 }

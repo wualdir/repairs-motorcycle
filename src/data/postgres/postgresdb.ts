@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 import { User } from "./models/user.model";
 import { Repairs } from "./models/repair.model";
-// import { Videogame } from './models/videogame.model';
 
 interface Options {
   host: string;

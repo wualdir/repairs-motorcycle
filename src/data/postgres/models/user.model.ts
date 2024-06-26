@@ -25,19 +25,22 @@ export class User extends BaseEntity {
 
   @Column({
     nullable: false,
-    type: "text",
+    type: "varchar",
+    length:200
   })
   name: string;
 
   @Column({
     nullable: false,
-    type: "text",
+    type: "varchar",
+    length:250
   })
   email: string;
 
   @Column({
     nullable: false,
-    type: "text",
+    type: "varchar",
+    length:250
   })
   password: string;
 

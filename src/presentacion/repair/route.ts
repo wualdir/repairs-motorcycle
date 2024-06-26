@@ -6,8 +6,8 @@ export class RepairRoutes {
   static get routes(): Router {
     const router = Router();
 
-    const RepairUser = new RepairsServices();
-    const controller = new RepairsController(RepairUser);
+    const RepairService = new RepairsServices();
+    const controller = new RepairsController(RepairService);
 
     router.post("/", controller.createRepairs);
     router.get("/", controller.getRepairs);
