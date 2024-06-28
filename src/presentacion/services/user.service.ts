@@ -1,4 +1,5 @@
 import { User } from "../../data";
+import { CustomError } from "../../domain";
 
 enum Rol {
   CLIENT = "CLIENT",
@@ -19,14 +20,12 @@ export class UserServices {
     user.password = UserData.password.trim();
     user.rol=Rol.CLIENT;
     user.status=Client.ACTIVE;
+    
     try {
-      
-     return await user.save();
-      
+     return await user.save();   
     } catch (error: any) {
-      console.log(error);
+      throw  CustomError.InternalServer("something went very wrong 🧨 ") 
     }
-
   }
 
   async findAllUsers() {
@@ -37,12 +36,12 @@ export class UserServices {
         }
       });
     } catch (error: any) {
-      console.log(error);
+      throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }
   }
 
   async findOneUserById(id: number) {
-    try {
+    
       const user = await User.findOne({
         where: {
           id: id,
@@ -51,13 +50,10 @@ export class UserServices {
       });
 
       if (!user) {
-        throw new Error("el usuario no existe");
+        throw CustomError.notFound(`user by id ${id} not found`)
       }
       return user;
-    } catch (error: any) {
-      throw new Error("internal server error");
-     
-    }
+    
   }
 
   async updateUser(UserData: any, id: number) {
@@ -69,9 +65,7 @@ export class UserServices {
     try {
     return  await user.save();
     } catch (error) {
-      console.log(error);
-
-      throw new Error("Internal Server Error");
+      throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }
   }
 
@@ -84,7 +78,7 @@ export class UserServices {
       await user.save()
       return;
     } catch (error) {
-      throw new Error('Internal Server Error');
+      throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }
 
   }

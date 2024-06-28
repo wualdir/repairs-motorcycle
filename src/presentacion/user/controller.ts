@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserServices } from "../services/user.service";
+import { CustomError } from "../../domain";
 
 export class UserController {
   
@@ -7,14 +8,19 @@ export class UserController {
   {}
 
   createUser = (req: Request, res: Response) => {
+
     const { name, email, password } = req.body;
     this.Userservice.CreateUser({ name, email, password })
-
       .then((user) => {
          res.status(201).json(user);
       })
       .catch((error: any) => {
-         res.status(500).json(error);
+         
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -25,7 +31,11 @@ export class UserController {
          res.status(200).json(user);
       })
       .catch((error: any) => {
-         res.status(500).json(error);
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -42,8 +52,12 @@ export class UserController {
       })
 
       .catch((error: any) => {
-         res.status(500).json(error);
-      });
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
+      })
   };
 
   
@@ -61,8 +75,11 @@ export class UserController {
          res.status(200).json(user);
       })
       .catch((error: any) => {
-        
-         res.status(500).json(error);
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -78,7 +95,11 @@ export class UserController {
    })
    .catch((error: any) => {
      
-      res.status(500).json(error);
+      if (error instanceof CustomError) {
+         return res.status(error.statusCod).json(error.message)
+      }
+      console.log(error)
+      return res.status(500).json({message:"something went very wrong 🧨 "})
    });
   };
 }
