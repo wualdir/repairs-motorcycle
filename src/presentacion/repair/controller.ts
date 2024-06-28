@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { RepairsServices } from "../services/repair.service";
+import { CustomError } from "../../domain";
 enum Status {
   PENDING = "PENDING",
   COMPLETED = "COMPLETED",
@@ -19,7 +20,11 @@ export class RepairsController {
          res.status(201).json(repair);
       })
       .catch((error: any) => {
-         res.status(500).json(error);
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -29,7 +34,11 @@ export class RepairsController {
          res.status(200).json(repair);
       })
       .catch((error: any) => {
-         res.status(500).json(error);
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -45,7 +54,11 @@ export class RepairsController {
       })
 
       .catch((error: any) => {
-         res.status(500).json(error);
+         if (error instanceof CustomError) {
+            return res.status(error.statusCod).json(error.message)
+         }
+         console.log(error)
+         return res.status(500).json({message:"something went very wrong 🧨 "})
       });
   };
 
@@ -64,8 +77,12 @@ export class RepairsController {
       })
       .catch((error: any) => {
         console.log(error);
-         res.status(500).json(error);
-      });
+        if (error instanceof CustomError) {
+         return res.status(error.statusCod).json(error.message)
+      }
+      console.log(error)
+      return res.status(500).json({message:"something went very wrong 🧨 "})
+   });
   };
 
   deleteRepairs = (req: Request, res: Response) => {
@@ -79,7 +96,11 @@ export class RepairsController {
   })
   .catch((error: any) => {
     
-     res.status(500).json(error);
-  });
+   if (error instanceof CustomError) {
+      return res.status(error.statusCod).json(error.message)
+   }
+   console.log(error)
+   return res.status(500).json({message:"something went very wrong 🧨 "})
+});
  };
 }

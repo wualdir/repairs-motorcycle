@@ -1,16 +1,15 @@
 import { Repairs } from "../../data";
+import { CustomError } from "../../domain";
 
 enum Status {
   PENDING = "PENDING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
 }
-
 export class RepairsServices {
   constructor() {}
 
   async CreateRepairs(RepairData: any) {
-    // console.log(RepairData);
     const repair = new Repairs();
     repair.date = RepairData.date;
     repair.status = Status.PENDING;
@@ -20,7 +19,7 @@ export class RepairsServices {
     return  await repair.save();
 
     } catch (error: any) {
-      console.log(error);
+      throw  CustomError.InternalServer("something went very wrong 🧨")
     }
   }
 
@@ -32,11 +31,11 @@ export class RepairsServices {
         }
       });
     } catch (error: any) {
-      console.log(error);
+      throw  CustomError.InternalServer("something went very wrong 🧨")
     }
   }
   async findOneRepairById(id: number) {
-    try {
+    
       const repair = await Repairs.findOne({
         where: {
           id: id,
@@ -45,13 +44,10 @@ export class RepairsServices {
       });
 
       if (!repair) {
-        throw new Error("no existe cita para reparacion");
+       throw CustomError.notFound("no existe cita para reparacion")
       }
       return repair;
-    } catch (error: any) {
-      throw new Error("internal server error");
-      
-    }
+    
   }
 
   async updateRepair(RepairData: any, id: number) {
@@ -62,12 +58,10 @@ export class RepairsServices {
     repair.id_user = RepairData.id_user;
     
     try {
-        await repair.save();
-        return;
+      return  await repair.save();
       } catch (error) {
         console.log(error);
-  
-        throw new Error("Internal Server Error");
+        throw  CustomError.InternalServer("something went very wrong 🧨")
       }
   }
 
@@ -80,7 +74,7 @@ export class RepairsServices {
       await repair.save()
       return;
     } catch (error) {
-      throw new Error('Internal Server Error');
+      throw  CustomError.InternalServer("something went very wrong 🧨")
     }
 
   }
