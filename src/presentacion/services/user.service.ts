@@ -1,5 +1,6 @@
 import { User } from "../../data";
-import { CustomError } from "../../domain";
+import { CreateUserDto, CustomError, UpdateUserDto } from "../../domain";
+
 
 enum Rol {
   CLIENT = "CLIENT",
@@ -10,10 +11,14 @@ enum Client {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
 }
+
+
 export class UserServices {
   constructor() {}
 
-  async CreateUser(UserData: any) {
+ 
+
+  async CreateUser(UserData: CreateUserDto) {
     const user = new User();
     user.name = UserData.name.toLowerCase().trim();
     user.email = UserData.email.toLowerCase().trim();
@@ -24,7 +29,7 @@ export class UserServices {
     try {
      return await user.save();   
     } catch (error: any) {
-      throw  CustomError.InternalServer("something went very wrong 🧨 ") 
+      throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }
   }
 
@@ -52,15 +57,15 @@ export class UserServices {
       if (!user) {
         throw CustomError.notFound(`user by id ${id} not found`)
       }
-      return user;
-    
+      return user;  
   }
 
-  async updateUser(UserData: any, id: number) {
+  async updateUser(UserData: UpdateUserDto, id: number) {
     const user = await this.findOneUserById(id);
 
     user.name = UserData.name.toLowerCase().trim();
     user.email = UserData.email.toLowerCase().trim();
+    user.password = UserData.password.trim();
     
     try {
     return  await user.save();

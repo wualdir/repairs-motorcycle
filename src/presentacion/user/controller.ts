@@ -1,42 +1,35 @@
 import { Request, Response } from "express";
 import { UserServices } from "../services/user.service";
-import { CustomError } from "../../domain";
+import { CreateUserDto, CustomError, UpdateUserDto } from "../../domain";
+
 
 export class UserController {
   
   constructor(public readonly Userservice: UserServices) 
   {}
 
-  createUser = (req: Request, res: Response) => {
+private handleError=(error:unknown,res:Response)=>{
+   if (error instanceof CustomError) {
+       res.status(error.statusCod).json({message: error.message})
+   }
+   console.log(error)
+    res.status(500).json({message:"something went very wrong 🧨 "})
+}
 
-    const { name, email, password } = req.body;
-    this.Userservice.CreateUser({ name, email, password })
-      .then((user) => {
-         res.status(201).json(user);
-      })
-      .catch((error: any) => {
-         
-         if (error instanceof CustomError) {
-            return res.status(error.statusCod).json(error.message)
-         }
-         console.log(error)
-         return res.status(500).json({message:"something went very wrong 🧨 "})
-      });
+
+  createUser = (req: Request, res: Response) => {
+    const [error,createDtoUser]=CreateUserDto.createUdto(req.body)
+    if(error) return res.status(422).json({message:error})
+    this.Userservice.CreateUser(createDtoUser!)
+      .then((user) => res.status(201).json(user))
+      .catch((error: unknown) => this.handleError(error,res))
   };
 
 
   getUser = (_: Request, res: Response) => {
     this.Userservice.findAllUsers()
-      .then((user) => {
-         res.status(200).json(user);
-      })
-      .catch((error: any) => {
-         if (error instanceof CustomError) {
-            return res.status(error.statusCod).json(error.message)
-         }
-         console.log(error)
-         return res.status(500).json({message:"something went very wrong 🧨 "})
-      });
+      .then((user) => res.status(200).json(user))
+      .catch((error: unknown) => this.handleError(error,res))
   };
 
 
@@ -46,41 +39,22 @@ export class UserController {
        res.status(400).json({ message: "El id debe ser un numero" });
     }
     this.Userservice.findOneUserById(+id)
-
-      .then((user) => {
-         res.status(200).json(user);
-      })
-
-      .catch((error: any) => {
-         if (error instanceof CustomError) {
-            return res.status(error.statusCod).json(error.message)
-         }
-         console.log(error)
-         return res.status(500).json({message:"something went very wrong 🧨 "})
-      })
+      .then((user) =>res.status(200).json(user))
+      .catch((error: unknown) => this.handleError(error,res))
   };
 
   
   updateUser = (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name, email } = req.body;
-
+    const [error,UpdateDtoUser]=UpdateUserDto.updateUdto(req.body)
+    if(error) return res.status(422).json({message:error})
     if (isNaN(+id)) {
-       res.status(400).json({ message: "El id debe ser un numero" });
+     return  res.status(400).json({ message: "El id debe ser un numero" });
     }
 
-    this.Userservice.updateUser({ name, email }, +id)
-
-      .then((user) => {
-         res.status(200).json(user);
-      })
-      .catch((error: any) => {
-         if (error instanceof CustomError) {
-            return res.status(error.statusCod).json(error.message)
-         }
-         console.log(error)
-         return res.status(500).json({message:"something went very wrong 🧨 "})
-      });
+    this.Userservice.updateUser(UpdateDtoUser!,+id)
+      .then((user) =>res.status(200).json(user))
+      .catch((error: unknown) => this.handleError(error,res))
   };
 
   
@@ -90,16 +64,7 @@ export class UserController {
       return res.status(400).json({ message: 'El id debe ser un numero' })
     }
     this.Userservice.deleteUser(+id)
-    .then(() => {
-      res.status(204).json();
-   })
-   .catch((error: any) => {
-     
-      if (error instanceof CustomError) {
-         return res.status(error.statusCod).json(error.message)
-      }
-      console.log(error)
-      return res.status(500).json({message:"something went very wrong 🧨 "})
-   });
-  };
+    .then(() => res.status(204).json())
+    .catch((error: unknown) => this.handleError(error,res))
+    }
 }
