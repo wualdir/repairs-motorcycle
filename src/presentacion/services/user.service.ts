@@ -1,3 +1,4 @@
+import { byCriptAdapter, jwtAdapter } from "../../config";
 import { User } from "../../data";
 import { CreateUserDto, CustomError, UpdateUserDto } from "../../domain";
 
@@ -12,22 +13,41 @@ enum Client {
   INACTIVE = "INACTIVE",
 }
 
-
 export class UserServices {
   constructor() {}
 
  
-
   async CreateUser(UserData: CreateUserDto) {
+    
+    const userExist = await User.findOne({
+      
+      where: {
+        email:UserData.email,
+        status:Client.ACTIVE
+      },
+    });
+
+    if (userExist) {
+      throw CustomError.badRequest('email already exist')
+    }
+    
     const user = new User();
     user.name = UserData.name.toLowerCase().trim();
     user.email = UserData.email.toLowerCase().trim();
-    user.password = UserData.password.trim();
+    user.password = byCriptAdapter.hash(UserData.password);
     user.rol=Rol.CLIENT;
     user.status=Client.ACTIVE;
     
     try {
-     return await user.save();   
+
+      await user.save(); 
+     const token = await jwtAdapter.generateToken({id:user.id})  
+     if(!token) throw  CustomError.InternalServer('error while creating JWT')
+
+      return{
+        token,
+        user,
+      }
     } catch (error: any) {
       throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }

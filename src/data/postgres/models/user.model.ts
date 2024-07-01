@@ -21,7 +21,6 @@ enum Client {
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  unique: true;
 
   @Column({
     nullable: false,
@@ -33,7 +32,8 @@ export class User extends BaseEntity {
   @Column({
     nullable: false,
     type: "varchar",
-    length:250
+    length:250,
+    unique:true
   })
   email: string;
 
@@ -45,6 +45,7 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({
+    type:'enum',
     nullable: false,
     enum: Rol,
     default: Rol.CLIENT,
@@ -52,6 +53,7 @@ export class User extends BaseEntity {
   rol: Rol;
 
   @Column({
+    type:'enum',
     nullable: false,
     enum: Client,
     default: Client.ACTIVE,
