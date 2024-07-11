@@ -1,3 +1,3 @@
 export * from './errors/custom.errors'
-export * from './dtos/createUser.dto'
-export *from './dtos/updateUser.dto'
+export * from './dtos/Users/createUser.dto'
+export *from './dtos/Users/updateUser.dto'

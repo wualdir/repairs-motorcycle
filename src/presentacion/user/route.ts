@@ -11,8 +11,12 @@ export class UserRoutes {
   const Userservice = new UserServices();
   const controller = new UserController(Userservice);
  
-  router.post("/login", controller.createUser);
-  router.post("/register", controller.getUser);
+ 
+  router.post("/register", controller.createUser);
+  // router.post("/login", controller.createUser);
+
+  // router.post("/login", controller.createUser);
+  // router.post("/register", controller.getUser);
   return router
  
 }

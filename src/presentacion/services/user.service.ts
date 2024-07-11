@@ -35,8 +35,7 @@ export class UserServices {
     user.name = UserData.name.toLowerCase().trim();
     user.email = UserData.email.toLowerCase().trim();
     user.password = byCriptAdapter.hash(UserData.password);
-    user.rol=Rol.CLIENT;
-    user.status=Client.ACTIVE;
+    
     
     try {
 
