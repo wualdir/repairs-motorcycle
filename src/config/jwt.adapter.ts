@@ -1,18 +1,18 @@
-import jwt from 'jsonwebtoken'
-import { envs } from './env'
+import jwt from "jsonwebtoken";
+import { envs } from "./env";
 
-export class jwtAdapter{
-
-    static async generateToken(payload:any,duration:string='3h'){
-
-        return new Promise((resolve)=>{
-            jwt.sign(payload,envs.JWT_SEED,{expiresIn:duration},(error,token)=>{
-
-                if(error) return resolve(null)
-                resolve(token)
-            })
-        })
-
-        
-    }
+export class jwtAdapter {
+  static async generateToken(payload: any, duration: string = "3h") {
+    return new Promise((resolve) => {
+      jwt.sign(
+        payload,
+        envs.JWT_SEED,
+        { expiresIn: duration },
+        (error, token) => {
+          if (error) return resolve(null);
+          resolve(token);
+        }
+      );
+    });
+  }
 }
