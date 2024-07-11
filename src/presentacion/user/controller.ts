@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserServices } from "../services/user.service";
-import { CreateUserDto, CustomError, UpdateUserDto } from "../../domain";
+import { CreateUserDto, CustomError, LoginUserDto, UpdateUserDto } from "../../domain";
 
 
 export class UserController {
@@ -25,6 +25,14 @@ private handleError=(error:unknown,res:Response)=>{
       .catch((error: unknown) => this.handleError(error,res))
   };
 
+  //login
+  Login = async(req: Request, res: Response) => {
+    const [error,loginDtoUser]=LoginUserDto.logindto(req.body)
+    if(error) return res.status(422).json({message:error})
+    this.Userservice.login(loginDtoUser!)
+      .then((user) => res.status(201).json(user))
+      .catch((error: unknown) => this.handleError(error,res))
+  }
 
   getUser = (_: Request, res: Response) => {
     this.Userservice.findAllUsers()

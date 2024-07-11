@@ -1,6 +1,6 @@
 import { byCriptAdapter, jwtAdapter } from "../../config";
 import { User } from "../../data";
-import { CreateUserDto, CustomError, UpdateUserDto } from "../../domain";
+import { CreateUserDto, CustomError, LoginUserDto, UpdateUserDto } from "../../domain";
 
 
 enum Rol {
@@ -50,6 +50,34 @@ export class UserServices {
     } catch (error: any) {
       throw  CustomError.InternalServer("something went very wrong 🧨 ")
     }
+  }
+  //login
+  async login(LoginData: LoginUserDto){
+    const user = await User.findOne({
+      
+      where: {
+        email:LoginData.email,
+        status:Client.ACTIVE
+      }
+    })
+
+    if (!user) throw CustomError.unAutorized('Invalid credential')
+      const validpassword = byCriptAdapter.compare(LoginData.password,user.password)
+      if(!validpassword) throw CustomError.unAutorized('Invalid credential')
+
+        const token= await jwtAdapter.generateToken({id:user.id})
+        if(!token)  throw CustomError.InternalServer('error while creating JWT')
+        return {
+          token:token,
+          user:{
+            id:user.id,
+            name:user.name,
+            email:user.email,
+            rol:user.rol
+
+          }
+        }
+    
   }
 
   async findAllUsers() {
