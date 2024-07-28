@@ -1,4 +1,4 @@
-import { compare, genSaltSync, hashSync } from "bcryptjs";
+import { compare, compareSync, genSaltSync, hashSync } from "bcryptjs";
 
 export const byCriptAdapter = {
   hash: (password: string) => {
@@ -6,6 +6,6 @@ export const byCriptAdapter = {
     return hashSync(password, salt);
   },
   compare: (bodypassword: string, hashedpasword: string) => {
-    return compare(bodypassword, hashedpasword);
+    return compareSync(bodypassword, hashedpasword);
   },
 };

@@ -34,6 +34,16 @@ export class UserController {
       .catch((error: unknown) => this.handleError(error, res));
   };
 
+  getProfile = async (req: Request, res: Response) => {
+  const  { id } = req.body.sessionUser
+  this.Userservice.getProfile(+id)
+  .then((user) => res.status(200).json(user))
+  .catch((error: unknown) => this.handleError(error, res));
+
+  }
+  
+
+
   getUser = (_: Request, res: Response) => {
     this.Userservice.findAllUsers()
       .then((user) => res.status(200).json(user))

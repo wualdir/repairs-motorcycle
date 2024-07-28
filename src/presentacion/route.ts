@@ -7,6 +7,7 @@ export class AppRoutes {
     const router = Router();
 
     router.use("/api/v1/users", UserRoutes.routes);
+    
     router.use("/api/v1/repairs", RepairRoutes.routes);
 
     return router;

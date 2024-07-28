@@ -15,4 +15,15 @@ export class jwtAdapter {
       );
     });
   }
+
+
+  static async validateToken<T>(token:string):Promise <T | null>{
+    return new Promise((resolve)=>{
+      jwt.verify(token,envs.JWT_SEED,(err:any,decoded:any)=>{
+        if(err) return resolve(null)
+
+          resolve(decoded as T)
+      })
+    })
+  }
 }

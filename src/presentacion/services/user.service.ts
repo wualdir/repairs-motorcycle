@@ -51,7 +51,7 @@ export class UserServices {
     }
   }
   //login
-  async login(LoginData: LoginUserDto) {
+ public async login(LoginData: LoginUserDto) {
     const user = await User.findOne({
       where: {
         email: LoginData.email,
@@ -60,11 +60,9 @@ export class UserServices {
     });
 
     if (!user) throw CustomError.unAutorized("Invalid credential");
-    const validpassword = byCriptAdapter.compare(
-      LoginData.password,
-      user.password
-    );
-    if (!validpassword) throw CustomError.unAutorized("Invalid credential");
+    
+    const validpassword = byCriptAdapter.compare(LoginData.password,user.password);
+    if (!validpassword) throw CustomError.unAutorized("Invalid credential pass");
 
     const token = await jwtAdapter.generateToken({ id: user.id });
     if (!token) throw CustomError.InternalServer("error while creating JWT");
@@ -77,6 +75,18 @@ export class UserServices {
         rol: user.rol,
       },
     };
+  }
+
+  public async getProfile(id:number) {
+    const user = await User.findOne({
+      where: {
+        id: id,
+        status: Client.ACTIVE,
+      },
+    });
+
+    if (!user) throw CustomError.notFound("User not found");
+    return user
   }
 
   async findAllUsers() {
